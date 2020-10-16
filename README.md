@@ -1,2 +1,4 @@
-# TicTacToe
-Nothing special just testing github with my first thing done alone 
+# TicTacToe with AI
+
+For both players you can chose ai or player
+AI uses the minimax algorithm
