@@ -40,26 +40,7 @@ class Tictactoe:
                 best_score = max(best_score, score) if is_max else min(
                     best_score, score)
         return best_score
-
-        # if is_max:
-        #     best_score = float('-inf')
-        #     for i in range(9):
-        #         if self.valid_move(i):
-        #             self.board[i] = 'O'
-        #             score = self.minimax(False)
-        #             self.board[i] = ' '
-        #             best_score = max(best_score, score)
-        #     return best_score
-        # else:
-        #     best_score = float('inf')
-        #     for i in range(9):
-        #         if self.valid_move(i):
-        #             self.board[i] = 'X'
-        #             score = self.minimax(True)
-        #             self.board[i] = ' '
-        #             best_score = min(best_score, score)
-        #     return best_score
-
+    
     def best_move(self):
         best_score = float('-inf')
         move = 0
