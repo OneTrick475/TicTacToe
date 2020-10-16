@@ -23,16 +23,76 @@ class Tictactoe:
  {self.board[6]} | {self.board[7]} | {self.board[8]} 
 ''')
 
-    def move(self):
-        try:
-            place = int(input('Where do you want to move?')) - 1
-        except ValueError:
-            print('Must be a number 1-9')
-            return
-        if place <= 8 and place >= 0 and self.valid_move(place):
-            self.board[place] = self.current_player()
-            self.current_move += 1
-            self.show_board()
+    def minimax(self, is_max, player):
+        if self.won():
+            return -1 if is_max else 1
+
+        if self.draw():
+            return 0
+
+        other_player = 'X' if player == 'O' else 'O'
+        best_score = float('-inf') if is_max else float('inf')
+        for i in range(9):
+            if self.valid_move(i):
+                self.board[i] = player if is_max else other_player
+                score = self.minimax(not is_max, player)
+                self.board[i] = ' '
+                best_score = max(best_score, score) if is_max else min(
+                    best_score, score)
+        return best_score
+
+        # if is_max:
+        #     best_score = float('-inf')
+        #     for i in range(9):
+        #         if self.valid_move(i):
+        #             self.board[i] = 'O'
+        #             score = self.minimax(False)
+        #             self.board[i] = ' '
+        #             best_score = max(best_score, score)
+        #     return best_score
+        # else:
+        #     best_score = float('inf')
+        #     for i in range(9):
+        #         if self.valid_move(i):
+        #             self.board[i] = 'X'
+        #             score = self.minimax(True)
+        #             self.board[i] = ' '
+        #             best_score = min(best_score, score)
+        #     return best_score
+
+    def best_move(self):
+        best_score = float('-inf')
+        move = 0
+        for i in range(9):
+            if self.valid_move(i):
+                self.board[i] = self.current_player()
+                score = self.minimax(False, self.current_player())
+                self.board[i] = ' '
+
+                if score > best_score:
+                    best_score = score
+                    move = i
+
+        return move
+
+    def move_ai(self):
+        self.board[self.best_move()] = self.current_player()
+        self.current_move += 1
+        self.show_board()
+
+    def move(self, player):
+        if player == 'player':
+            try:
+                place = int(input('Where do you want to move?')) - 1
+            except ValueError:
+                print('Must be a number 1-9')
+                return
+            if place <= 8 and place >= 0 and self.valid_move(place):
+                self.board[place] = self.current_player()
+                self.current_move += 1
+                self.show_board()
+        else:
+            self.move_ai()
 
     def valid_move(self, place):
         if self.board[place] == ' ':
@@ -45,9 +105,6 @@ class Tictactoe:
             return user_input <= 9 and user_input >= 1
         except ValueError:
             return False
-
-    def board_isnt_full(self):
-        return self.current_move < 9
 
     def current_player(self):
         return 'X' if self.current_move % 2 == 0 else 'O'
@@ -65,16 +122,22 @@ class Tictactoe:
         self.__init__()
 
     def draw(self):
-        return not self.board_isnt_full() and not self.won()
+        return ' ' not in self.board and not self.won()
 
     def play(self):
-        user_input = '''1. Play
-        2. Exit
-        '''
+        user_input = input('''Play - 1
+Exit - 2
+''')
         while user_input != '2':
+            player_x = input('player or ai? ')
+            player_o = input('player or ai? ')
             self.show_board()
             while True:
-                self.move()
+                player = self.current_player()
+                if player == 'X':
+                    self.move(player_x)
+                else:
+                    self.move(player_o)
                 if self.won():
                     print(f'{self.winner()} won!')
                     self.clear()
@@ -83,9 +146,9 @@ class Tictactoe:
                     print('There is a draw')
                     self.clear()
                     break
-            user_input = input('''1. Play again
-        2. Exit
-        ''')
+            user_input = input('''Play - 1
+Exit - 2
+''')
 
 
 idk = Tictactoe()
